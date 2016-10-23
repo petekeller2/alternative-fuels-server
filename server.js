@@ -16,7 +16,7 @@ app.post('/fuelStationsData', function(req, res) {
     //console.log(req.body);
     //console.log("nrelAPIkey", nrelAPIkey);
     if(req.body.fuelType && req.body.address && req.body.radius) {
-        var nrelUrlString = "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=" + req.body.fuelType + "&location=" + req.body.address + "&limit=10&radius=" + req.body.radius + "&api_key=" + nrelAPIkey + "&format=JSON";
+        var nrelUrlString = "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=" + req.body.fuelType + "&location=" + req.body.address + "&limit=10&radius=" + req.body.radius + "&status=E&api_key=" + nrelAPIkey + "&format=JSON";
         request.get({url:nrelUrlString, json:true}, function (error, response, body) {
             if (!error && response.statusCode == 200) {
                 //console.log(body.fuel_stations);
