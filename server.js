@@ -47,6 +47,7 @@ app.post('/fuelStationsData', function(req, res) {
                             console.log(bodyGoogle.rows);
                             var hours, minutes, miles, feet;
                             for (var i = 0; i < body.fuel_stations.length; i++) {
+                                extendedData[i].totalDistance = bodyGoogle.rows[0].elements[i].distance.value;
                                 miles = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value) / 5280);
                                 if(miles) {
                                     feet = 0;
@@ -60,6 +61,7 @@ app.post('/fuelStationsData', function(req, res) {
                                     feet: feet
                                 };
                                 console.log("extendedData[i].distance", extendedData[i].distance);
+
                                 extendedData[i].totalDuration = bodyGoogle.rows[0].elements[i].duration.value;
                                 hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
                                 if(hours) {
