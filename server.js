@@ -6,10 +6,10 @@ var express = require('express'),
 
 app.use(bodyParser.json());
 
-//for local ionic and server testing
-app.all('*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "https://alternative-fuels.firebaseapp.com");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
     next();
 });
 
