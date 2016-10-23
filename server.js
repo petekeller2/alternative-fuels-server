@@ -1,17 +1,13 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
+    cors = require('cors'),
 
-    app = express();
+app = express();
 
 app.use(bodyParser.json());
 
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
-    next();
-});
+app.use(cors());
 
 var nrelAPIkey = process.env.NREL_API_KEY;
 var googleAPIkey = process.env.GOOGLE_API_KEY;
