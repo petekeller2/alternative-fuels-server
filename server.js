@@ -47,8 +47,9 @@ app.post('/fuelStationsData', function(req, res) {
                             console.log(bodyGoogle.rows);
                             var hours, minutes;
                             for (var i = 0; i < body.fuel_stations.length; i++) {
-                                extendedData[i].distance = bodyGoogle.rows[0].elements[i].distance.value;
+                                extendedData[i].distance = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value) / 5280);
                                 console.log("extendedData[i].distance", extendedData[i].distance);
+                                extendedData[i].totalDuration = bodyGoogle.rows[0].elements[i].duration.value;
                                 hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
                                 if(hours) {
 
@@ -56,7 +57,7 @@ app.post('/fuelStationsData', function(req, res) {
                                 else {
                                     hours = 0;
                                 }
-                                minutes = Math.floor((Number(bodyGoogle.rows[0].elements[i].duration.value) - (hours*3600)) / 60);
+                                minutes = (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) - (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600))) / 60);
                                 if(minutes) {
 
                                 }
