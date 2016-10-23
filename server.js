@@ -25,14 +25,19 @@ app.post('/fuelStationsData', function(req, res) {
                     var origins = null;
                     var destinations = null;
                     var extendedData = body.fuel_stations;
+                    var addressString;
 
                     for (var i = 0; i < body.fuel_stations.length; i++) {
+
+                        addressString = body.fuel_stations[i].street_address + ", " + body.fuel_stations[i].city + ", " + body.fuel_stations[i].state;
+                        extendedData[i].combinedAddress = addressString;
+
                         if (destinations && origins) {
-                            destinations = destinations + "|" + body.fuel_stations[i].street_address + ", " + body.fuel_stations[i].city + ", " + body.fuel_stations[i].state;
+                            destinations = destinations + "|" + addressString;
                             origins = origins + "|" + req.body.zipCode;
                         }
                         else {
-                            destinations = body.fuel_stations[i].street_address + ", " + body.fuel_stations[i].city + ", " + body.fuel_stations[i].state;
+                            destinations = addressString;
                             origins = req.body.zipCode;
                         }
                     }
@@ -41,10 +46,28 @@ app.post('/fuelStationsData', function(req, res) {
                     request.get({url:googleUrlString, json:true}, function (errorGoogle, responseGoogle, bodyGoogle) {
                         if (!error && response.statusCode == 200) {
                             console.log(bodyGoogle.rows);
+                            var hours, minutes;
                             for (var i = 0; i < body.fuel_stations.length; i++) {
                                 extendedData[i].distance = bodyGoogle.rows[0].elements[i].distance.value;
                                 console.log("extendedData[i].distance", extendedData[i].distance);
-                                extendedData[i].duration = bodyGoogle.rows[0].elements[i].duration.value;
+                                hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
+                                if(hours) {
+
+                                }
+                                else {
+                                    hours = 0;
+                                }
+                                minutes = Math.floor((Number(bodyGoogle.rows[0].elements[i].duration.value) - (hours*3600)) / 60);
+                                if(minutes) {
+
+                                }
+                                else {
+                                    minutes = 0;
+                                }
+                                extendedData[i].duration = {
+                                    hours: hours,
+                                    minutes: minutes
+                                };
                             }
                         }
                         res.json(extendedData);
