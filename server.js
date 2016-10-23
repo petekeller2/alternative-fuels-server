@@ -45,9 +45,20 @@ app.post('/fuelStationsData', function(req, res) {
                     request.get({url:googleUrlString, json:true}, function (errorGoogle, responseGoogle, bodyGoogle) {
                         if (!error && response.statusCode == 200) {
                             console.log(bodyGoogle.rows);
-                            var hours, minutes;
+                            var hours, minutes, miles, feet;
                             for (var i = 0; i < body.fuel_stations.length; i++) {
-                                extendedData[i].distance = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value) / 5280);
+                                miles = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value) / 5280);
+                                if(miles) {
+                                    feet = 0;
+                                }
+                                else {
+                                    miles = 0;
+                                    feet = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value));
+                                }
+                                extendedData[i].distance =  {
+                                    miles: miles,
+                                    feet: feet
+                                };
                                 console.log("extendedData[i].distance", extendedData[i].distance);
                                 extendedData[i].totalDuration = bodyGoogle.rows[0].elements[i].duration.value;
                                 hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
@@ -57,7 +68,7 @@ app.post('/fuelStationsData', function(req, res) {
                                 else {
                                     hours = 0;
                                 }
-                                minutes = (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) - (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600))) / 60);
+                                minutes = Math.round((Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) - (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600))) / 60));
                                 if(minutes) {
 
                                 }
