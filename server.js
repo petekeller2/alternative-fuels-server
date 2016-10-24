@@ -41,12 +41,12 @@ app.post('/fuelStationsData', function(req, res) {
                     }
                     //console.log("googleAPIkey", googleAPIkey);
                     var googleUrlString = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + origins + "&destinations=" + destinations + "&key=" + googleAPIkey;
-                    console.log("googleUrlString", googleUrlString);
+                    //console.log("googleUrlString", googleUrlString);
                     request.get({url:googleUrlString, json:true}, function (errorGoogle, responseGoogle, bodyGoogle) {
                         //console.log("errorGoogle", errorGoogle);
                         //console.log("responseGoogle", responseGoogle);
                         if (!errorGoogle && responseGoogle.statusCode == 200) {
-                            console.log(bodyGoogle.rows);
+                            //console.log(bodyGoogle.rows);
                             if(bodyGoogle && bodyGoogle.rows && bodyGoogle.rows[0]) {
                                 var hours, minutes, miles, feet;
                                 for (var i = 0; i < body.fuel_stations.length; i++) {
@@ -63,7 +63,7 @@ app.post('/fuelStationsData', function(req, res) {
                                         miles: miles,
                                         feet: feet
                                     };
-                                    console.log("extendedData[i].distance", extendedData[i].distance);
+                                    //console.log("extendedData[i].distance", extendedData[i].distance);
 
                                     extendedData[i].totalDuration = bodyGoogle.rows[0].elements[i].duration.value;
                                     hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
