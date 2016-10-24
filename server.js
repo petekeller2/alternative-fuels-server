@@ -14,7 +14,6 @@ var googleAPIkey = process.env.GOOGLE_API_KEY || 'your googleAPIkey';
 
 app.post('/fuelStationsData', function(req, res) {
     //console.log(req.body);
-    //console.log("nrelAPIkey", nrelAPIkey);
     if(req.body.fuelType && req.body.address && req.body.radius) {
         var nrelUrlString = "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?fuel_type=" + req.body.fuelType + "&location=" + req.body.address + "&limit=10&radius=" + req.body.radius + "&status=E&api_key=" + nrelAPIkey + "&format=JSON";
         request.get({url:nrelUrlString, json:true}, function (error, response, body) {
@@ -40,50 +39,61 @@ app.post('/fuelStationsData', function(req, res) {
                             origins = req.body.address;
                         }
                     }
-                    console.log(i);
-                    var googleUrlString = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + origins + "&destinations=" + destinations + "key=" + googleAPIkey;
+                    //console.log("googleAPIkey", googleAPIkey);
+                    var googleUrlString = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + origins + "&destinations=" + destinations + "&key=" + googleAPIkey;
+                    console.log("googleUrlString", googleUrlString);
                     request.get({url:googleUrlString, json:true}, function (errorGoogle, responseGoogle, bodyGoogle) {
-                        if (!error && response.statusCode == 200) {
+                        //console.log("errorGoogle", errorGoogle);
+                        //console.log("responseGoogle", responseGoogle);
+                        if (!errorGoogle && responseGoogle.statusCode == 200) {
                             console.log(bodyGoogle.rows);
-                            var hours, minutes, miles, feet;
-                            for (var i = 0; i < body.fuel_stations.length; i++) {
-                                extendedData[i].totalDistance = bodyGoogle.rows[0].elements[i].distance.value;
-                                miles = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value) / 5280);
-                                if(miles) {
-                                    feet = 0;
-                                }
-                                else {
-                                    miles = 0;
-                                    feet = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value));
-                                }
-                                extendedData[i].distance =  {
-                                    miles: miles,
-                                    feet: feet
-                                };
-                                console.log("extendedData[i].distance", extendedData[i].distance);
+                            if(bodyGoogle && bodyGoogle.rows && bodyGoogle.rows[0]) {
+                                var hours, minutes, miles, feet;
+                                for (var i = 0; i < body.fuel_stations.length; i++) {
+                                    extendedData[i].totalDistance = bodyGoogle.rows[0].elements[i].distance.value;
+                                    miles = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value) / 5280);
+                                    if (miles) {
+                                        feet = 0;
+                                    }
+                                    else {
+                                        miles = 0;
+                                        feet = Math.round(Number(bodyGoogle.rows[0].elements[i].distance.value));
+                                    }
+                                    extendedData[i].distance = {
+                                        miles: miles,
+                                        feet: feet
+                                    };
+                                    console.log("extendedData[i].distance", extendedData[i].distance);
 
-                                extendedData[i].totalDuration = bodyGoogle.rows[0].elements[i].duration.value;
-                                hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
-                                if(hours) {
+                                    extendedData[i].totalDuration = bodyGoogle.rows[0].elements[i].duration.value;
+                                    hours = Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600);
+                                    if (hours) {
 
-                                }
-                                else {
-                                    hours = 0;
-                                }
-                                minutes = Math.round((Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) - (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600))) / 60));
-                                if(minutes) {
+                                    }
+                                    else {
+                                        hours = 0;
+                                    }
+                                    minutes = Math.round((Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) - (Math.floor(Number(bodyGoogle.rows[0].elements[i].duration.value) / 3600))) / 60));
+                                    if (minutes) {
 
+                                    }
+                                    else {
+                                        minutes = 0;
+                                    }
+                                    extendedData[i].duration = {
+                                        hours: hours,
+                                        minutes: minutes
+                                    };
                                 }
-                                else {
-                                    minutes = 0;
-                                }
-                                extendedData[i].duration = {
-                                    hours: hours,
-                                    minutes: minutes
-                                };
+                                res.json(extendedData);
+                            }
+                            else {
+                                res.end("distance and duration calculation failed");
                             }
                         }
-                        res.json(extendedData);
+                        else {
+                            res.end("distance and duration calculation failed");
+                        }
                     });
                 }
                 else {
