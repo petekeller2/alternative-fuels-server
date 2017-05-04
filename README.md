@@ -1,8 +1,8 @@
-#Backend to the alternative fuel app. Built using Express.
+# Alternative Fuels Server
 
-Currently being hosted by heroku
+Backend to the alternative fuel app. Built using Express.
 
-##Local Testing
+## Local Testing
 
 Install the npm packages and use sudo if needed.
 
